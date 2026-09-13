@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Neked 💛</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+
+    /* Nagy szív gomb */
+    #bigHeart {
+        font-size: 120px;
+        color: #ff4d6d;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        user-select: none;
+    }
+    #bigHeart:hover {
+        transform: scale(1.2);
+    }
+
+    /* Szívecskés háttér */
+    .hearts {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: -1;
+    }
+    .heart {
+        position: absolute;
+        color: #ff4d6d;
+        font-size: 24px;
+        animation: floatUp 6s linear infinite;
+        opacity: 0.8;
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(100vh) scale(1); opacity: 0.8; }
+        100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    }
+
+    #output {
+        font-size: 32px;
+        text-align: center;
+        max-width: 80%;
+        display: none;
+    }
+    .letter {
+        display: inline-block;
+        transition: color 0.4s ease;
+    }
+</style>
+</head>
+<body>
+
+<!-- Háttérzene -->
+<audio id="bgm" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="hearts" id="hearts"></div>
+
+<!-- Nagy szív gomb -->
+<div id="bigHeart">❤</div>
+
+<!-- Szöveg -->
+<div id="output"></div>
+
+<script>
+/* Szívecskés háttér */
+function createHearts() {
+    const container = document.getElementById("hearts");
+    for (let i = 0; i < 40; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = "❤";
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.animationDelay = Math.random() * 5 + "s";
+        h.style.fontSize = (20 + Math.random() * 30) + "px";
+        container.appendChild(h);
+    }
+}
+createHearts();
+
+/* Dalszöveg */
+const lyrics = [
+    "I been waitin' all night for this moment",
+    "I been waitin' all year for this moment",
+    "I been picturin' you takin' off your clothes for me",
+    "I been literally curvin' all these hoes for you",
+    "Daddy told you better bring your ass home",
+    "Cinderella better bring your ass home",
+    "Man, I swear that parents just don't understand",
+    "You ain't gotta be old to be a man",
+    "Take my hand, come with me to my room",
+    "Girl, I got a suite at the SLS",
+    "I already know you got expensive taste",
+    "Take my hand, follow me to my room",
+    "Tell your little friends you gon' be alright",
+    "Girl, I got a plan for the whole night"
+];
+
+const colors = ["#ff4d6d", "#ffb3c6", "#ffd6e0", "#ff8fa3", "#ff5c8a", "#ff99b6"];
+
+document.getElementById("bigHeart").addEventListener("click", () => {
+    // szív eltűnik
+    document.getElementById("bigHeart").style.display = "none";
+
+    // zene indul azonnal
+    const audio = document.getElementById("bgm");
+    audio.currentTime = 0;
+    audio.play();
+
+    // SZÖVEG KÉSLELTETVE indul
+    const delay = 13200
+    
+    setTimeout(() => {
+        document.getElementById("output").style.display = "block";
+        lineIndex = 0;
+        startLyrics();
+    }, delay);
+});
+
+
+/* Szöveg animáció */
+let lineIndex = 0;
+
+function startLyrics() {
+    showLine();
+}
+
+function showLine() {
+    if (lineIndex >= lyrics.length) return;
+
+    const line = lyrics[lineIndex];
+    const output = document.getElementById("output");
+    output.innerHTML = "";
+
+    let charIndex = 0;
+
+    function showChar() {
+        if (charIndex >= line.length) {
+            lineIndex++;
+            setTimeout(showLine, 800);
+            return;
+        }
+
+        const ch = line[charIndex];
+
+        if (ch === " ") {
+            output.appendChild(document.createTextNode(" "));
+        } else {
+            const span = document.createElement("span");
+            span.className = "letter";
+            span.textContent = ch;
+            span.style.color = colors[Math.floor(Math.random() * colors.length)];
+            output.appendChild(span);
+        }
+
+        charIndex++;
+        setTimeout(showChar, 60);
+    }
+
+    showChar();
+}
+</script>
+
+</body>
+</html>
